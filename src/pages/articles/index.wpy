@@ -1,0 +1,246 @@
+<style lang="css">
+  .article{
+    background-color: #fff;
+    /* padding:20rpx; */
+    padding:10rpx 20rpx;
+    margin:20rpx 0;
+    border-radius: 10rpx;
+    color:#2D2E2F;
+  }
+
+  .article-header{
+    height: 120rpx;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom:8rpx;
+    /* padding-bottom:6rpx; */
+    border-bottom: 1px solid #efefef;
+  }
+
+  .article-header .article-author-avatar{
+    width:15%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-content: center;
+  }
+
+  .article-header .article-author-avatar image{
+    /*
+    width: 90rpx;
+    height:90rpx;
+    */
+    width: 78rpx;
+    height: 78rpx;
+    border-radius: 50%;
+    margin-right: 20rpx;
+  }
+
+  .article-side-header {
+    width:85%;
+  }
+
+  .article-sub-header{
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+  }
+
+  .article-sub-header .article-title{
+    color: #444;
+    font-size: 30rpx;
+    font-weight: 600;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+  }
+
+  .article-info{
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+  }
+
+  .article-info .article-by{
+    color:#c7c7c7;
+    margin-right:10rpx;
+  }
+
+  .article-info .article-author{
+    color:#666;
+    font-size:26rpx;
+  }
+
+  .article-info .article-fid-item{
+    font-size:26rpx;
+    color: #FF6A6A;
+  }
+
+  .article-info .article-in{
+    color:#c7c7c7;
+    margin:0 20rpx;
+  }
+
+  .article-img{
+    position: relative;
+    width: 100%;
+    height: 200rpx;
+    overflow: hidden;
+    background-position: 50%;
+    background-size: cover;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    margin-bottom:10rpx;
+  }
+
+  .article-img-info{
+    position: absolute;
+    top: 50%;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    overflow: hidden;
+  }
+
+  .article-img-item {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    -webkit-transform: translate3d(-50%,-50%,0);
+    transform: translate3d(-50%,-50%,0);
+  }
+
+  .article-message{
+    margin:10rpx 0;
+    color: #909090;
+    font-size: 30rpx;
+  }
+
+  .article-ext-info{
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    /* margin-top: 10rpx; */
+    color: #c7c7c7;
+  }
+
+  .article-ext-info .article-re{
+    display: flex;
+    flex-flow: row nowrap;
+  }
+
+  .article-ext-info .article-re .zan-icon{
+    color:#f44444;
+  }
+
+  .article-ext-info .article-re view{
+    margin-right:20rpx;
+  }
+
+  .scroll-to-top {
+    z-index: 100;
+    position: fixed;
+    right: 50rpx;
+    bottom: 50rpx;
+    width: 90rpx;
+    height: 90rpx;
+  }
+
+  .scroll-to-top-img {
+    background-color: #FF6A6A;
+    width: 90rpx;
+    height: 90rpx;
+    border-radius: 50%;
+    opacity: 0.9;
+  }
+</style>
+
+<template>
+  <view class="container">
+    <view class="page-body">
+      <view class="page__bd">
+        <repeat for="{{ articles }}" key="" index="index" item="article">
+          <view class="article">
+            <navigator url="/pages/articles/show" hover-class="navigator-hover">
+            <view class="article-content">
+              <view class="article-header">
+                <view class="article-author-avatar">
+                  <image src="https://lccdn.phphub.org/uploads/avatars/10797_1523929716.jpg?imageView2/1/w/100/h/100"></image>
+                </view>
+                <view class="article-side-header">
+                  <view class="article-sub-header">
+                    <view class="article-title">Laravel 广播系统例子</view>
+                  </view>
+                  <view class="article-info">
+                    <view class="article-by">by</view>
+                    <view class="article-author">cocoyo</view>
+                  </view>
+                </view>
+              </view>
+              <view class="article-img">
+                <view class="article-img-info">
+                  <image class="article-img-item" src='https://www.cocoyo.xin//storage/201805/22/naoCDXMwuXXe4jdE9v28sz8OqkX5k1NoWBHMMH91.png'></image>
+                </view>
+              </view>
+              <view class="article-message">
+                稍稍了解laravel广播
+              </view>
+              <view class="article-ext-info">
+                <view class="article-re">
+                  <view class="zan-icon zan-icon-password-view"></view>
+                  <view>100</view>
+                  <view class="zan-icon zan-icon-chat"></view>
+                  <view>200</view>
+                </view>
+                <view class="article-post-time">2018-09-18</view>
+              </view>
+            </view>
+            </navigator>
+          </view>
+        </repeat>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    export default class Index extends wepy.page {
+        config = {
+            navigationBarTitleText: 'wonderfully'
+        }
+        components = {}
+        data = {
+            articles: [
+                {
+                    'title' : 'Laravel 广播系统例子',
+                    'description' : '稍稍了解laravel广播'
+                },
+                {
+                    'title' : 'Laravel 广播系统例子',
+                    'description' : '稍稍了解laravel广播'
+                },
+                {
+                    'title' : 'Laravel 广播系统例子',
+                    'description' : '稍稍了解laravel广播'
+                },
+                {
+                    'title' : 'Laravel 广播系统例子',
+                    'description' : '稍稍了解laravel广播'
+                },
+                {
+                    'title' : 'Laravel 广播系统例子',
+                    'description' : '稍稍了解laravel广播'
+                }
+            ]
+        }
+        methods = {}
+        onLoad() {}
+    }
+</script>
