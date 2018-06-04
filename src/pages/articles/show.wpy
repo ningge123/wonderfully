@@ -4,6 +4,11 @@
             <view class="page__bd">
                 <view class="article">
                     <view class="zan-font-16 zan-font-bold">MYSQL 变量详情</view>
+                    <view class="zan-row zan-cell">
+                        <view class="zan-c-gray-dark zan-col zan-col-4">cocoyo</view>
+                        <view class="zan-c-gray-dark zan-col zan-col-4">几分钟前</view>
+                    </view>
+
                 </view>
             </view>
         </view>
@@ -27,5 +32,8 @@
         margin:20rpx 0;
         border-radius: 10rpx;
         color:#2D2E2F;
+    }
+    .zan-cell{
+        padding: 12px 0;
     }
 </style>
