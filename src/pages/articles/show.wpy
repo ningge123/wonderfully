@@ -4,11 +4,14 @@
             <view class="page__bd">
                 <view class="article">
                     <view class="zan-font-16 zan-font-bold">MYSQL 变量详情</view>
-                    <view class="zan-row zan-cell">
-                        <view class="zan-c-gray-dark zan-col zan-col-4">cocoyo</view>
-                        <view class="zan-c-gray-dark zan-col zan-col-4">几分钟前</view>
+                    <view class="media-box__info">
+                        <view class="media-box__info__meta">原创 : cocoyo</view>
+                        <view class="media-box__info__meta media-box__info__meta_extra">三天前</view>
                     </view>
-
+                    <view class="media-box__body">
+                        <import src="/markdown/entry.wxml"/>
+                        <template is="entry" data="{{...article}}"/>
+                    </view>
                 </view>
             </view>
         </view>
@@ -21,10 +24,39 @@
         config = {
             navigationBarTitleText: '文章详情'
         }
+        data = {
+            article : ''
+        }
+        onLoad() {
+            const Towxml = require('towxml')
+            const towxml = new Towxml();
+            wx.request({
+                url: 'https://raw.githubusercontent.com/overtrue/laravel-emoji/master/README.md',
+                header: {
+                    'content-type': 'application/x-www-form-urlencoded'
+                },
+                success: (res) => {
+                    let content = res.data;
+
+                    //将文件转换成为towxml支持的json数据
+                    let data = towxml.toJson(content, 'markdown');
+            // let data = towxml.toJson('<audio></audio>','html');
+            // let data = towxml.toJson('<div>&lt;tml</div>', 'html');
+
+
+            //         //更新数据并隐藏loading...
+                    this.article = data;
+                    this.$apply();
+                }
+            });
+
+        }
     }
 </script>
 
 <style>
+    @import '/markdown/style/main.wxss';
+    @import '/markdown/style/light.wxss';
     .article{
         background-color: #fff;
         /* padding:20rpx; */
@@ -33,7 +65,24 @@
         border-radius: 10rpx;
         color:#2D2E2F;
     }
-    .zan-cell{
-        padding: 12px 0;
+    .media-box__info{
+        margin-top:15px;
+        padding-bottom:5px;
+        font-size:13px;
+        color:#CECECE;
+        line-height:1em;
+        list-style:none;
+        overflow:hidden;
+    }
+    .media-box__info__meta {
+        float:left;
+        padding-right:1em;
+    }
+    .media-box__info__meta_extra {
+        padding-left:1em;
+        border-left:1px solid #CECECE;
+    }
+    .media-box__body{
+        padding-top: 10rpx;
     }
 </style>
