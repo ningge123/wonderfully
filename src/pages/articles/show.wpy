@@ -13,8 +13,45 @@
                         <template is="entry" data="{{...article}}"/>
                     </view>
                 </view>
+                <view>
+                    <view class="resp-head">全部回复（100）</view>
+                    <repeat for="{{ comments }}" key="" index="index" item="comment">
+                        <view class="article">
+                            <view class="article-info">
+                                <view class="article-author">
+                                    <view>
+                                        <image class="article-author-icon" src="https://lccdn.phphub.org/uploads/avatars/10797_1523929716.jpg?imageView2/1/w/100/h/100"/>
+                                    </view>
+                                    <view class="article-author-info">
+                                        <view>cocoyo</view>
+                                        <view>2018-06-25</view>
+                                    </view>
+                                </view>
+                                <view class="article-author-position">
+                                    <view>10楼</view>
+                                </view>
+                            </view>
+                            <view>
+                                这是一个回复
+                            </view>
+                        </view>
+                    </repeat>
+                </view>
             </view>
         </view>
+        <view class="page-tail">
+            <view class="resp-input-cell">
+                <input class="resp-input" type="text" placeholder="说点什么吧..." bindinput="input_message" value="{{message}}"/>
+            </view>
+            <view class="resp-btn" bindtap="submit_message">回复</view>
+
+            <!--<navigator class="need-login" url="/pages/login/login">点此处登录之后，即可回复本帖</navigator>-->
+        </view>
+        <!--<block wx:if="{{scroll_show}}">-->
+        <!--<view class="scroll-to-top" bindtap="scrollToTop">-->
+        <!--<image class="scroll-to-top-img" src="../../resources/image/top.png"/>-->
+        <!--</view>-->
+        <!--</block>-->
     </view>
 </template>
 
@@ -25,7 +62,21 @@
             navigationBarTitleText: '文章详情'
         }
         data = {
-            article : ''
+            article : '',
+            comments: [
+                {
+                    id: 1
+                },
+                {
+                    id: 1
+                },
+                {
+                    id: 1
+                },
+                {
+                    id: 1
+                }
+            ]
         }
         onLoad() {
             const Towxml = require('towxml')
@@ -57,32 +108,16 @@
 <style>
     @import '/markdown/style/main.wxss';
     @import '/markdown/style/light.wxss';
-    .article{
-        background-color: #fff;
-        /* padding:20rpx; */
-        padding:10rpx 20rpx;
-        margin:20rpx 0;
-        border-radius: 10rpx;
-        color:#2D2E2F;
-    }
-    .media-box__info{
-        margin-top:15px;
-        padding-bottom:5px;
-        font-size:13px;
-        color:#CECECE;
-        line-height:1em;
-        list-style:none;
+    @import "/style/detail.wxss";
+    .article-author-icon{
+        width:320px;
+        height:240px;
+        display:inline-block;
         overflow:hidden;
+        vertical-align: text-bottom;
+        margin:0;
+        border-radius:10%;
+
     }
-    .media-box__info__meta {
-        float:left;
-        padding-right:1em;
-    }
-    .media-box__info__meta_extra {
-        padding-left:1em;
-        border-left:1px solid #CECECE;
-    }
-    .media-box__body{
-        padding-top: 10rpx;
-    }
+
 </style>
