@@ -134,6 +134,7 @@ export default class extends wepy.app {
     pages: [
       'pages/articles/index',
       'pages/articles/show',
+      'pages/user/index',
       'pages/auth/login',
     ],
     window: {
@@ -149,7 +150,7 @@ export default class extends wepy.app {
               iconPath: 'images/home.png',
               selectedIconPath: 'images/home_selected.png'
           }, {
-              pagePath: 'pages/auth/login',
+              pagePath: 'pages/user/index',
               text: '我的',
               iconPath: 'images/user.png',
               selectedIconPath: 'images/user_selected.png'
