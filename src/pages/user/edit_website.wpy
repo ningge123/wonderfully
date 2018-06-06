@@ -3,19 +3,19 @@
         <view class="page-body">
             <view class="page__bd">
                 <view class="zan-panel">
-                    <view class="zan-cell zan-field {{ errors.name ? 'zan-field--error' : ''}}">
+                    <view class="zan-cell zan-field {{ errors.website ? 'zan-field--error' : ''}}">
                         <view class="zan-cell__hd zan-field__title">
-                            我的昵称
+                            我的个人网站
                         </view>
-                        <input class="zan-field__input zan-cell__bd" value="{{ user.name }}" type="text"
-                               placeholder="请输入昵称"
+                        <input class="zan-field__input zan-cell__bd" value="{{ user.website }}" type="text"
+                               placeholder="请输入您的个人网站地址"
                                bindinput="bindNameInput"/>
                         <view class="weui-cell__ft">
-                            <icon wx:if="{{ errors.name }}" type="warn" size="23" color="#E64340"></icon>
+                            <icon wx:if="{{ errors.website }}" type="warn" size="23" color="#E64340"></icon>
                         </view>
                     </view>
                 </view>
-                <view wx:if="{{ errors.name }}" class="weui-cells__tips error-message" style="color:#E64340">{{errors.name[0]}}</view>
+                <view wx:if="{{ errors.website }}" class="weui-cells__tips error-message" style="color:#E64340">{{errors.website[0]}}</view>
                 <view class="weui-btn-area" style="margin-top: 30px">
                     <button class="zan-btn zan-btn--red" @tap="submit">修改</button>
                 </view>
@@ -28,26 +28,26 @@
     import wepy from 'wepy'
     import api from '@/utils/api'
 
-    export default class EditName extends wepy.page {
+    export default class EditWebsite extends wepy.page {
         config = {
-            navigationBarTitleText: '我的昵称',
+            navigationBarTitleText: '我的个人网站',
         }
         data = {
             // 用户信息
             user: null,
             // 错误信息
             errors: null,
-            name: ''
+            website: ''
         }
         async onShow() {
             // 获取当前用户信息
             this.user = await this.$parent.getCurrentUser()
-            this.name = this.user.name
+            this.website = this.user.website
             this.$apply()
         }
         methods = {
             bindNameInput(e) {
-                this.name = e.detail.value
+                this.website = e.detail.value
             }
         }
         // 表单提交
@@ -57,7 +57,7 @@
                 let editResponse = await api.request({
                     url: 'users/' + this.user.name + '/profile',
                     method: 'PUT',
-                    data: {name: this.name},
+                    data: {website: this.website},
                     header: {
                         'X-Requested-With': 'XMLHttpRequest'
                     }
@@ -100,4 +100,3 @@
         text-align: right;
     }
 </style>
-

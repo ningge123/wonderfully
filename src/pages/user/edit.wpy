@@ -3,47 +3,56 @@
         <view class="page-body">
             <view class="page__bd">
                 <view class="zan-panel">
+                    <navigator class="zan-cell zan-cell--access" @tap="updateAvatar">
+                        <view class="zan-cell__bd">
+                            头像
+                        </view>
+                        <view class="zan-c-gray-darker">
+                            <image class="avatar" src="{{ image_url + user.avatar }}"></image>
+                        </view>
+                        <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+                    </navigator>
                     <navigator class="zan-cell zan-cell--access" url="/pages/user/edit_name">
                         <view class="zan-cell__bd">
                             我的昵称
                         </view>
-                        <view class="zan-c-gray-darker">cocoyo</view>
+                        <view class="zan-c-gray-darker">{{ user.name }}</view>
                         <view class="weui-cell__ft weui-cell__ft_in-access"></view>
                     </navigator>
                     <navigator class="zan-cell zan-cell--access" url="/pages/user/edit_email">
                         <view class="zan-cell__bd">
                             我的邮箱
                         </view>
-                        <view class="zan-c-gray-darker">2430114823@qq.com</view>
+                        <view class="zan-c-gray-darker">{{ user.email }}</view>
                         <view class="weui-cell__ft weui-cell__ft_in-access"></view>
                     </navigator>
                 </view>
                 <view class="zan-panel-title">其它杂项</view>
                 <view class="zan-panel">
-                    <navigator class="zan-cell zan-cell--access">
+                    <navigator class="zan-cell zan-cell--access" url="/pages/user/edit_description">
                         <view class="zan-cell__bd">
                             我的描述
                         </view>
-                        <view class="zan-c-gray-darker">a happy geek</view>
+                        <view class="zan-c-gray-darker">{{ user.description }}</view>
                         <view class="weui-cell__ft weui-cell__ft_in-access"></view>
                     </navigator>
-                    <navigator class="zan-cell zan-cell--access">
+                    <navigator class="zan-cell zan-cell--access" url="/pages/user/edit_github">
                         <view class="zan-cell__bd">
                             我的GitHub
                         </view>
-                        <view class="zan-c-gray-darker">Ning123</view>
+                        <view class="zan-c-gray-darker">{{ user.github_name }}</view>
                         <view class="weui-cell__ft weui-cell__ft_in-access"></view>
                     </navigator>
-                    <navigator class="zan-cell zan-cell--access">
+                    <navigator class="zan-cell zan-cell--access" url="/pages/user/edit_website">
                         <view class="zan-cell__bd">
                             我的个人网站
                         </view>
-                        <view class="zan-c-gray-darker">https://www.cocoyo.xin</view>
+                        <view class="zan-c-gray-darker">{{ user.website }}</view>
                         <view class="weui-cell__ft weui-cell__ft_in-access"></view>
                     </navigator>
                 </view>
                 <view class="weui-btn-area" style="margin-top: 30px">
-                    <button class="zan-btn zan-btn--red" @tap="submit">退出登录</button>
+                    <button class="zan-btn zan-btn--red" @tap="logout">退出登录</button>
                 </view>
             </view>
         </view>
@@ -59,6 +68,54 @@
         config = {
             navigationBarTitleText: '个人信息',
         }
+        data = {
+            user : null,
+            image_url : ''
+        }
+        async onShow() {
+            this.image_url = imageUrl
+            // 获取当前用户信息
+            this.user = await this.$parent.getCurrentUser()
+            this.$apply()
+        }
+        async updateAvatar () {
+            // 选择头像图片
+            let image = await wepy.chooseImage({count: 1})
+
+            try {
+                // 获取选择的图片
+                let avatar = image.tempFilePaths[0]
+
+                // 调用上传图片接口
+                let imageResponse = await api.updateFile({
+                    url: 'users/' + this.user.name + '/wx_avatar',
+                    method: 'POST',
+                    name: 'image',
+                    formData: {
+                        type: 'avatar'
+                    },
+                    header: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    filePath: avatar
+                })
+
+                // 上传成功成功记录数据
+                if (imageResponse.statusCode === 200) {
+                    // 小程序上传结果没有做 JSON.parse，需要手动处理
+                    let responseData = JSON.parse(imageResponse.data)
+                    this.user.avatar = responseData.relative_url
+                    wepy.setStorageSync('user', this.user)
+                    this.$apply()
+                }
+            } catch (err) {
+                console.log(err)
+                wepy.showModal({
+                    title: '提示',
+                    content: '服务器错误，请联系管理员'
+                })
+            }
+        }
         methods = {
             // 退出
             async logout (e) {
@@ -67,8 +124,17 @@
 
                     // 退出成功清除信息
                     if (logoutResponse.statusCode === 204) {
+                        wepy.showToast({
+                            title: '退出登录成功',
+                            icon: 'success'
+                        })
                         this.user = null
-                        this.$apply()
+                        // 跳转到我的页面
+                        setTimeout(function() {
+                            wepy.switchTab({
+                                url: '/pages/user/index'
+                            })
+                        }, 2000)
                     }
                 } catch (err) {
                     console.log(err)
@@ -86,4 +152,12 @@
     .container{
         padding: 0;
     }
+    .avatar {
+       width:50px;
+        height:50px;
+        border-radius:10%;
+        margin-right:10px;
+
+    }
+
 </style>

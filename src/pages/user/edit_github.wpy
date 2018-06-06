@@ -3,19 +3,20 @@
         <view class="page-body">
             <view class="page__bd">
                 <view class="zan-panel">
-                    <view class="zan-cell zan-field {{ errors.name ? 'zan-field--error' : ''}}">
+                    <view class="zan-cell zan-field {{ errors.github_name ? 'zan-field--error' : ''}}">
                         <view class="zan-cell__hd zan-field__title">
-                            我的昵称
+                            我的Github
                         </view>
-                        <input class="zan-field__input zan-cell__bd" value="{{ user.name }}" type="text"
-                               placeholder="请输入昵称"
+                        <input class="zan-field__input zan-cell__bd" value="{{ user.github_name }}" type="text"
+                               placeholder="请输入您的github昵称"
                                bindinput="bindNameInput"/>
                         <view class="weui-cell__ft">
-                            <icon wx:if="{{ errors.name }}" type="warn" size="23" color="#E64340"></icon>
+                            <icon wx:if="{{ errors.github_name }}" type="warn" size="23" color="#E64340"></icon>
                         </view>
                     </view>
                 </view>
-                <view wx:if="{{ errors.name }}" class="weui-cells__tips error-message" style="color:#E64340">{{errors.name[0]}}</view>
+                <view class="zan-panel-title" style="padding: 10px">请保持github网站昵称相同!</view>
+                <view wx:if="{{ errors.github_name }}" class="weui-cells__tips error-message" style="color:#E64340">{{errors.github_name[0]}}</view>
                 <view class="weui-btn-area" style="margin-top: 30px">
                     <button class="zan-btn zan-btn--red" @tap="submit">修改</button>
                 </view>
@@ -28,26 +29,26 @@
     import wepy from 'wepy'
     import api from '@/utils/api'
 
-    export default class EditName extends wepy.page {
+    export default class EditGitHub extends wepy.page {
         config = {
-            navigationBarTitleText: '我的昵称',
+            navigationBarTitleText: '我的GitHub',
         }
         data = {
             // 用户信息
             user: null,
             // 错误信息
             errors: null,
-            name: ''
+            github_name: ''
         }
         async onShow() {
             // 获取当前用户信息
             this.user = await this.$parent.getCurrentUser()
-            this.name = this.user.name
+            this.github_name = this.user.github_name
             this.$apply()
         }
         methods = {
             bindNameInput(e) {
-                this.name = e.detail.value
+                this.github_name = e.detail.value
             }
         }
         // 表单提交
@@ -57,7 +58,7 @@
                 let editResponse = await api.request({
                     url: 'users/' + this.user.name + '/profile',
                     method: 'PUT',
-                    data: {name: this.name},
+                    data: {github_name: this.github_name},
                     header: {
                         'X-Requested-With': 'XMLHttpRequest'
                     }
@@ -100,4 +101,3 @@
         text-align: right;
     }
 </style>
-
