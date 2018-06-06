@@ -1,0 +1,53 @@
+<template>
+    <view class="container">
+        <view class="page-body">
+            <view class="page__bd">
+                <view class="zan-panel">
+                    <view class="zan-cell zan-field">
+                        <view class="zan-cell__hd zan-field__title">
+                            我的邮箱
+                        </view>
+                        <input class="zan-field__input zan-cell__bd" disabled value="{{ user.email }}" type="text"
+                               placeholder="请输入邮箱"
+                               bindinput="bindEmailInput"/>
+                        <view wx:if="{{ error }}" class="weui-cell__ft">
+                            <icon type="warn" size="23" color="#E64340"></icon>
+                        </view>
+                    </view>
+                </view>
+                <view class="zan-panel-title" style="padding: 10px">邮箱作为您的登录账号,不支持修改!</view>
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+
+    export default class EditEmail extends wepy.page {
+        config = {
+            navigationBarTitleText: '我的邮箱',
+        }
+        data = {
+            // 用户信息
+            user: null,
+            // 错误信息
+            errors: null
+        }
+        async onShow() {
+            // 获取当前用户信息
+            this.user = await this.$parent.getCurrentUser()
+            this.$apply()
+        }
+    }
+</script>
+
+<style>
+    .container{
+        padding: 0;
+    }
+    .zan-field__input{
+        text-align: right;
+    }
+</style>
+

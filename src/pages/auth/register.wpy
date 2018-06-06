@@ -1,0 +1,204 @@
+<template>
+    <view class="container">
+        <view class="page-body">
+            <view class="login">
+                <view class="register">
+                    <navigator url="/pages/auth/login" hover-class="none">
+                         已有账号? 请登录
+                    </navigator>
+                </view>
+                <view class="zan-panel">
+                    <view class="zan-cell zan-field {{ errors.name ? 'zan-field--error' : ''}}">
+                        <view class="zan-cell__hd zan-field__title">
+                            <view class="zan-icon zan-icon-contact login-icon"></view>
+                        </view>
+                        <input class="zan-field__input zan-cell__bd" type="text" placeholder="请输入用户名"
+                               bindinput="bindUsernameInput"/>
+                        <view class="weui-cell__ft">
+                            <icon wx:if="{{ errors.name }}" type="warn" size="23" color="#E64340"></icon>
+                        </view>
+                        <view wx:if="{{ errors.name }}" class="weui-cells__tips error-message">{{errors.name[0]}}</view>
+                    </view>
+                </view>
+                <view class="zan-panel" style="margin-top:20px;">
+                    <view class="zan-cell zan-field {{ errors.email ? 'zan-field--error' : ''}}">
+                        <view class="zan-cell__hd zan-field__title">
+                            <view class="zan-icon zan-icon-edit-data login-icon"></view>
+                        </view>
+                        <input class="zan-field__input zan-cell__bd" type="text" placeholder="请输入邮箱"
+                               bindinput="bindEmailInput"/>
+                        <view class="weui-cell__ft">
+                            <icon wx:if="{{ errors.email }}" type="warn" size="23" color="#E64340"></icon>
+                        </view>
+                        <view wx:if="{{ errors.email }}" class="weui-cells__tips error-message">{{errors.email[0]}}</view>
+                    </view>
+                </view>
+                <view class="zan-panel" style="margin-top:20px;">
+                    <view class="zan-cell zan-field {{  errors.password ? 'zan-field--error' : ''}}">
+                        <view class="zan-cell__hd zan-field__title">
+                            <view class="zan-icon zan-icon-password-not-view login-icon"></view>
+                        </view>
+                        <input class="zan-field__input zan-cell__bd" type="password" placeholder="请输入密码"
+                               bindinput="bindPasswordInput"/>
+                        <view class="weui-cell__ft">
+                            <icon wx:if="{{ errors.password }}" type="warn" size="23" color="#E64340"></icon>
+                        </view>
+                        <view wx:if="{{ errors.password }}" class="weui-cells__tips error-message">{{errors.password[0]}}</view>
+                    </view>
+                </view>
+                <view class="zan-panel" style="margin-top:20px;">
+                    <view class="zan-cell zan-field {{  errors.password ? 'zan-field--error' : ''}}">
+                        <view class="zan-cell__hd zan-field__title">
+                            <view class="zan-icon zan-icon-password-not-view login-icon"></view>
+                        </view>
+                        <input class="zan-field__input zan-cell__bd" type="password" placeholder="请输入确认密码"
+                               bindinput="bindPasswordConfirmationInput"/>
+                        <view class="weui-cell__ft">
+                            <icon wx:if="{{ errors.password }}" type="warn" size="23" color="#E64340"></icon>
+                        </view>
+                    </view>
+                </view>
+                <view style="margin-top: 30px">
+                    <button class="zan-btn zan-btn--red" @tap="submit">立即注册</button>
+                </view>
+            </view>
+        </view>
+    </view>
+    <view class="weui-toptips weui-toptips_warn" wx:if="{{ errorMessage }}">{{ errorMessage }}</view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import api from '@/utils/api'
+
+    export default class Register extends wepy.page {
+        config = {
+            navigationBarTitleText: '注册'
+        }
+        data = {
+            // 用户名
+            name: '',
+            // 邮箱
+            email: '',
+            // 密码
+            password: '',
+            // 确认密码
+            password_confirmation: '',
+            // 表单错误
+            errors: {},
+            errorMessage: ''
+        }
+        methods = {
+            // 绑定用户名 input 变化
+            bindEmailInput(e) {
+                this.email = e.detail.value
+            },
+            // 绑定密码 input 变化
+            bindPasswordInput(e) {
+                this.password = e.detail.value
+            },
+            bindUsernameInput(e) {
+                this.name = e.detail.value
+            },
+            bindPasswordConfirmationInput(e) {
+                this.password_confirmation = e.detail.value
+            },
+            // 表单提交
+            async submit() {
+                // 提交时重置错误
+                this.error = false
+                this.errorMessage = ''
+
+                try {
+                    // 注册所需参数
+                    let params = {
+                        email: this.email,
+                        password: this.password,
+                        name: this.name,
+                        password_confirmation: this.password_confirmation
+                    }
+                    let loginData = await wepy.login()
+                    // 参数中增加code，用于获取 openid 绑定当前用户
+                    params.code = loginData.code
+
+                    let registerResponse = await api.request({
+                        url: 'weapp/users',
+                        method: 'POST',
+                        data: params,
+                        header: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+
+                    // 表单错误
+                    if (registerResponse.statusCode === 422) {
+                        this.errors = registerResponse.data.errors
+                        this.$apply()
+                    }
+                    if (registerResponse.statusCode === 403) {
+                        this.errorMessage = registerResponse.data.message
+                        this.$apply()
+                    }
+                    // 注册成功，记录token
+                    if (registerResponse.statusCode === 201) {
+                        wepy.setStorageSync('access_token', registerResponse.data.token.access_token)
+                        wepy.setStorageSync('access_token_expired_at', new Date().getTime() + registerResponse.data.token.expires_in * 1000)
+                        // 设置用户信息
+                        wepy.setStorageSync('user', registerResponse.data.user)
+
+                        wepy.showToast({
+                            title: '注册成功',
+                            icon: 'success'
+                        })
+
+                        // 跳转到我的页面
+                        setTimeout(function() {
+                            wepy.switchTab({
+                                url: '/pages/user/index'
+                            })
+                        }, 2000)
+                    }
+                } catch (err) {
+                    console.log(err)
+                    wepy.showModal({
+                        title: '提示',
+                        content: '服务器错误，请联系管理员'
+                    })
+                }
+            }
+        }
+    }
+</script>
+
+<style>
+   .container{
+       background-color: #fff;
+   }
+    .zan-panel{
+        background-color: #f0f0f0;
+        border-radius: 27px;
+    }
+    .login{
+        padding: 80px 10px;
+    }
+    .register{
+        text-align:right;
+        color:#efd7a0;
+    }
+    .zan-field__title{
+        padding-right: 0;
+    }
+    .login-icon{
+        padding-right:10px;
+        border-right:solid 1px;
+        color: #ff4343;
+        font-size:17px
+    }
+    .zan-field__title{
+        min-width: 42px;
+    }
+    .weui-cells__tips{
+        color: #ff4343;
+    }
+</style>
+

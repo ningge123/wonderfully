@@ -1,0 +1,89 @@
+<template>
+    <view class="container">
+        <view class="page-body">
+            <view class="page__bd">
+                <view class="zan-panel">
+                    <navigator class="zan-cell zan-cell--access" url="/pages/user/edit_name">
+                        <view class="zan-cell__bd">
+                            我的昵称
+                        </view>
+                        <view class="zan-c-gray-darker">cocoyo</view>
+                        <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+                    </navigator>
+                    <navigator class="zan-cell zan-cell--access" url="/pages/user/edit_email">
+                        <view class="zan-cell__bd">
+                            我的邮箱
+                        </view>
+                        <view class="zan-c-gray-darker">2430114823@qq.com</view>
+                        <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+                    </navigator>
+                </view>
+                <view class="zan-panel-title">其它杂项</view>
+                <view class="zan-panel">
+                    <navigator class="zan-cell zan-cell--access">
+                        <view class="zan-cell__bd">
+                            我的描述
+                        </view>
+                        <view class="zan-c-gray-darker">a happy geek</view>
+                        <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+                    </navigator>
+                    <navigator class="zan-cell zan-cell--access">
+                        <view class="zan-cell__bd">
+                            我的GitHub
+                        </view>
+                        <view class="zan-c-gray-darker">Ning123</view>
+                        <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+                    </navigator>
+                    <navigator class="zan-cell zan-cell--access">
+                        <view class="zan-cell__bd">
+                            我的个人网站
+                        </view>
+                        <view class="zan-c-gray-darker">https://www.cocoyo.xin</view>
+                        <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+                    </navigator>
+                </view>
+                <view class="weui-btn-area" style="margin-top: 30px">
+                    <button class="zan-btn zan-btn--red" @tap="submit">退出登录</button>
+                </view>
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import api from '@/utils/api'
+    import {imageUrl} from "../../utils/image";
+
+    export default class Edit extends wepy.page {
+        config = {
+            navigationBarTitleText: '个人信息',
+        }
+        methods = {
+            // 退出
+            async logout (e) {
+                try {
+                    let logoutResponse = await api.logout()
+
+                    // 退出成功清除信息
+                    if (logoutResponse.statusCode === 204) {
+                        this.user = null
+                        this.$apply()
+                    }
+                } catch (err) {
+                    console.log(err)
+                    wepy.showModal({
+                        title: '提示',
+                        content: '服务器错误，请联系管理员'
+                    })
+                }
+            }
+        }
+    }
+</script>
+
+<style>
+    .container{
+        padding: 0;
+    }
+</style>

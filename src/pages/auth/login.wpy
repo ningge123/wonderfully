@@ -1,33 +1,39 @@
 <template>
     <view class="container">
         <view class="page-body">
-            <view class="page-head image-logo page-body-padding">
-                <image src='/images/logo.png' class="logo"></image>
-            </view>
-            <view class="zan-panel">
-                <view class="zan-cell zan-field {{ error ? 'zan-field--error' : ''}}">
-                    <view class="zan-cell__hd zan-field__title">邮箱</view>
-                    <input class="zan-field__input zan-cell__bd" type="text" placeholder="请输入邮箱" bindinput="bindUsernameInput"/>
-                    <view wx:if="{{ error }}" class="weui-cell__ft">
-                        <icon type="warn" size="23" color="#E64340"></icon>
+            <view class="login">
+                <view class="register">
+                    <navigator url="/pages/auth/register" hover-class="none">
+                        还没有账号? 请注册
+                    </navigator>
+                </view>
+                <view class="zan-panel">
+                    <view class="zan-cell zan-field {{ error ? 'zan-field--error' : ''}}">
+                        <view class="zan-cell__hd zan-field__title">
+                            <view class="zan-icon zan-icon-edit-data login-icon"></view>
+                        </view>
+                        <input class="zan-field__input zan-cell__bd" type="text" placeholder="请输入邮箱"
+                               bindinput="bindEmailInput"/>
+                        <view wx:if="{{ error }}" class="weui-cell__ft">
+                            <icon type="warn" size="23" color="#E64340"></icon>
+                        </view>
                     </view>
                 </view>
-            </view>
-
-            <view class="zan-panel">
-                <view class="zan-cell zan-field {{ error ? 'zan-field--error' : ''}}">
-                    <view class="zan-cell__hd zan-field__title">密码</view>
-                    <input class="zan-field__input zan-cell__bd" type="password" placeholder="请输入密码" bindinput="bindPasswordInput"/>
-                    <view wx:if="{{ error }}" class="weui-cell__ft">
-                        <icon type="warn" size="23" color="#E64340"></icon>
+                <view class="zan-panel" style="margin-top:20px;">
+                    <view class="zan-cell zan-field {{ error ? 'zan-field--error' : ''}}">
+                        <view class="zan-cell__hd zan-field__title">
+                            <view class="zan-icon zan-icon-password-not-view login-icon"></view>
+                        </view>
+                        <input class="zan-field__input zan-cell__bd" type="password" placeholder="请输入密码"
+                               bindinput="bindPasswordInput"/>
+                        <view wx:if="{{ error }}" class="weui-cell__ft">
+                            <icon type="warn" size="23" color="#E64340"></icon>
+                        </view>
                     </view>
                 </view>
-            </view>
-            <view class="weui-agree__text" style="padding-top:10rpx;">
-                可.................是 我没有用户想怎么办?   <navigator url="/pages/auth/register" class="weui-agree__link">注册新用户</navigator>
-            </view>
-            <view class="zan-btns">
-                <button class="zan-btn zan-btn--primary" @tap="submit">登录</button>
+                <view style="margin-top: 30px">
+                    <button class="zan-btn zan-btn--red" @tap="submit">立即登录</button>
+                </view>
             </view>
         </view>
     </view>
@@ -54,7 +60,7 @@
         }
         methods = {
             // 绑定用户名 input 变化
-            bindUsernameInput(e) {
+            bindEmailInput(e) {
                 this.email = e.detail.value
             },
             // 绑定密码 input 变化
@@ -102,17 +108,52 @@
                 }
             }
         }
+        // 页面打开事件
+        async onShow() {
+            try {
+                // 打开页面自动调用一次登录
+                let authResponse = await api.login()
+
+                // 登录成功返回上一页
+                if (authResponse.statusCode === 200) {
+                    wepy.navigateBack()
+                }
+            } catch (err) {
+                wepy.showModal({
+                    title: '提示',
+                    content: '服务器错误，请联系管理员'
+                })
+            }
+        }
     }
 </script>
 
 <style>
-    .logo{
-        width:300px;
-        height:300px;
+   .container{
+       background-color: #fff;
+   }
+    .zan-panel{
+        background-color: #f0f0f0;
+        border-radius: 27px;
     }
-    .page-body-padding{
-        padding:0;
-        position: relative;
+    .login{
+        padding: 80px 10px;
+    }
+    .register{
+        text-align:right;
+        color:#efd7a0;
+    }
+    .zan-field__title{
+        padding-right: 0;
+    }
+    .login-icon{
+        padding-right:10px;
+        border-right:solid 1px;
+        color: #ff4343;
+        font-size:17px
+    }
+    .zan-field__title{
+        min-width: 42px;
     }
 </style>
 

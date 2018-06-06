@@ -121,6 +121,11 @@
     .cells-no-border::after, .cells-no-border::before {
         border:none;
     }
+    .zan-btn--red{
+        background-color: #ff5b59;
+        border-radius:28px;
+        color:#fff;
+    }
 </style>
 
 <script>
@@ -135,12 +140,16 @@ export default class extends wepy.app {
       'pages/articles/index',
       'pages/articles/show',
       'pages/user/index',
+      'pages/user/edit',
+      'pages/user/edit_email',
+      'pages/user/edit_name',
       'pages/auth/login',
+      'pages/auth/register',
     ],
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#fff',
-      navigationBarTitleText: 'WeChat',
+      navigationBarTitleText: 'wonderfully',
       navigationBarTextStyle: 'black'
     },
       tabBar: {
@@ -164,9 +173,41 @@ export default class extends wepy.app {
         this.use('requestfix')
         this.use('promisify')
     }
+   // 获取当前登录用户信息
+    async getCurrentUser () {
+        // 如果用户未登录
+        if (!this.checkLogin()) {
+            return null
+        }
 
+        // 从缓存中获取用户信息
+        let user = wepy.getStorageSync('user')
+
+        try {
+            // 登录了但是缓存中没有，请求接口获取
+            if (!user) {
+                let userResponse = await api.request('user')
+                // 状态码为 200 表示请求成功
+                if (userResponse.statusCode === 200) {
+                    user = userResponse.data.data
+                    wepy.setStorageSync('user', user)
+                }
+            }
+        } catch (err) {
+            console.log(err)
+            wepy.showModal({
+                title: '提示',
+                content: '服务器错误，请联系管理员'
+            })
+        }
+
+        return user
+    }
   onLaunch() {
-
   }
+    // 用户是否已经登录
+    checkLogin () {
+        return (wepy.getStorageSync('access_token') !== '')
+    }
 }
 </script>
