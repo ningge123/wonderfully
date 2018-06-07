@@ -3,16 +3,18 @@
         <view class="page-body">
             <view class="page__bd">
                 <repeat for="{{ follows }}" key="" index="index" item="follow">
-                    <view class="zan-panel">
-                        <image class="reset-icon" src="{{ image_url + follow.avatar }}"></image>
-                        <view class="zan-panel-media">
-                            <view class="zan-c-gray-dark zan-font-12">
-                                <view class="zan-panel-box" style="color:#9574EA">{{ follow.name }}</view>
-                                <view class="zan-panel-box">{{ follow.created_at }}</view>
+                    <navigator url="/pages/user/me?name={{ follow.name }}" hover-class="none">
+                        <view class="zan-panel">
+                            <image class="reset-icon" src="{{ image_url + follow.avatar }}"></image>
+                            <view class="zan-panel-media">
+                                <view class="zan-c-gray-dark zan-font-12">
+                                    <view class="zan-panel-box" style="color:#9574EA">{{ follow.name }}</view>
+                                    <view class="zan-panel-box">{{ follow.created_at }}</view>
+                                </view>
+                                <view class="zan-font-14" style="padding:10px 0">{{ follow.description }}</view>
                             </view>
-                            <view class="zan-font-14" style="padding:10px 0">{{ follow.description }}</view>
                         </view>
-                    </view>
+                    </navigator>
                 </repeat>
                 <view class="weui-loadmore weui-loadmore_line">
                     <view class="weui-loadmore__tips weui-loadmore__tips_in-line">我是有底线的</view>

@@ -140,7 +140,7 @@
                         this.$apply()
                     }
                     // 注册成功，记录token
-                    if (registerResponse.statusCode === 201) {
+                    if (registerResponse.statusCode === 200) {
                         wepy.setStorageSync('access_token', registerResponse.data.token.access_token)
                         wepy.setStorageSync('access_token_expired_at', new Date().getTime() + registerResponse.data.token.expires_in * 1000)
                         // 设置用户信息
@@ -156,7 +156,7 @@
                             wepy.switchTab({
                                 url: '/pages/user/index'
                             })
-                        }, 2000)
+                        }, 1000)
                     }
                 } catch (err) {
                     console.log(err)

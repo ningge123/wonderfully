@@ -16,19 +16,20 @@
                             </view>
                         </view>
                     </navigator>
-
-                    <view class="zan-panel" wx:if="{{ notification.type == 'followed-user-notification' }}">
-                        <view class="zan-icon zan-icon-goods-collect reset-icon" style="color: #ff4343;"></view>
-                        <view class="zan-panel-media">
-                            <view class="zan-c-gray-dark zan-font-12">
-                                <view class="zan-panel-box">系统通知</view>
-                                <view class="zan-panel-box">{{ notification.created_diff }}</view>
+                    <navigator url="/pages/user/me?name={{ notification.data.name }}" hover-class="navigator-hover" wx:if="{{ notification.type == 'followed-user-notification' }}">
+                        <view class="zan-panel">
+                            <view class="zan-icon zan-icon-goods-collect reset-icon" style="color: #ff4343;"></view>
+                            <view class="zan-panel-media">
+                                <view class="zan-c-gray-dark zan-font-12">
+                                    <view class="zan-panel-box">系统通知</view>
+                                    <view class="zan-panel-box">{{ notification.created_diff }}</view>
+                                </view>
+                                <view class="zan-font-14" style="padding:10px 0">
+                                    {{ notification.data.name }} • 关注了你</view>
+                                <view class="zan-c-gray zan-font-12">可以在关注列表查看</view>
                             </view>
-                            <view class="zan-font-14" style="padding:10px 0">{{ notification.data.name }} • 关注了你</view>
-                            <view class="zan-c-gray zan-font-12">可以在关注列表查看</view>
                         </view>
-                    </view>
-
+                    </navigator>
                 </repeat>
                 <view class="weui-loadmore weui-loadmore_line">
                     <view class="weui-loadmore__tips weui-loadmore__tips_in-line">我是有底线的</view>

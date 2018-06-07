@@ -2,15 +2,34 @@
     <view class="container">
         <view class="page-body">
             <view class="page-body-user">
-                <view class="user_bg" style="background-color:#fe5f55"></view>
+                <image wx:if="user.id == auth_user.id" @tap="updateBg" class="user_bg" mode="aspectFill" src="{{ image_url + (user.wx_bg ? user.wx_bg : user.avatar) }}"></image>
+                <image wx:else class="user_bg" mode="aspectFill" src="{{ image_url + (user.wx_bg ? user.wx_bg : user.avatar) }}"></image>
                 <view class="weui-cell__hd user_avatar">
-                    <image class="avatar" src="{{ image_url + user.avatar }}"/>
+                    <image wx:if="user.id == auth_user.id" @tap="updateAvatar" class="avatar" src="{{ image_url + user.avatar }}"/>
+                    <image wx:else class="avatar" src="{{ image_url + user.avatar }}"/>
                 </view>
             </view>
             <view style="text-align: center">
-                <view class="weui-cell__bd">
-                    <view class="zan-font-16 zan-font-bold" v:if="{{ user.name }}">{{ user.name }}</view>
-                    <view class="zan-c-gray-dark introduction" v:if="{{ user.description }}">{{ user.description }}</view>
+                <view class="weui-cell__bd" style="height: 100%">
+                    <view class="zan-font-16 zan-font-bold" wx:if="{{ user.name }}">{{ user.name }}</view>
+                    <view class="zan-c-gray-dark introduction" wx:if="{{ user.description }}">{{ user.description }}</view>
+                    <view wx:if="{{ auth_user }}">
+                        <view wx:if="{{ user.id != auth_user.id  }}">
+                            <view class="zan-font-bold" wx:if="{{ !user.is_following }}">
+                                <button @tap="followUser" class="zan-btn zan-btn--mini zan-btn--danger zan-btn--plain button-hover">关注</button>
+                            </view>
+                            <view class="zan-font-bold" wx:else>
+                                <button class="zan-btn zan-btn--mini zan-btn--danger zan-btn--plain button-hover">关注中</button>
+                            </view>
+                        </view>
+                    </view>
+                    <view wx:else>
+                        <navigator url="/pages/auth/login" hover-class="navigator-hover">
+                            <view class="zan-font-bold">
+                                <button class="zan-btn zan-btn--mini zan-btn--danger zan-btn--plain button-hover">关注</button>
+                            </view>
+                        </navigator>
+                    </view>
                 </view>
             </view>
             <view class="page-body-detail">
@@ -21,14 +40,14 @@
                     <view class="zan-c-gray page-body-pd">个人网站</view>
                 </view>
                 <view class="page-box">
-                    <view class="page-body-pd">2430114823@qq.com</view>
-                    <view class="page-body-pd">Cocoyo123</view>
-                    <view class="page-body-pd">cocoyo</view>
-                    <view class="page-body-pd">https://www.cocoyo.xin</view>
+                    <view class="page-body-pd">{{ user.email }}</view>
+                    <view class="page-body-pd">{{ user.github_name ? user.github_name : '暂无' }}</view>
+                    <view class="page-body-pd">{{ user.weibo_link ? user.weibo_link : '暂无' }}</view>
+                    <view class="page-body-pd">{{ user.website ? user.website : '暂无' }}</view>
                 </view>
-                <view>
-                    <view class="zan-font-12 zan-icon zan-icon-edit zan-c-blue"> 编辑个人资料</view>
-                </view>
+                <navigator url="/pages/user/edit" hover-class="navigator-hover" wx:if="{{user.id == auth_user.id}}">
+                    <view  class="zan-font-12 zan-icon zan-icon-edit zan-c-blue"> 编辑个人资料</view>
+                </navigator>
             </view>
         </view>
     </view>
@@ -41,21 +60,148 @@
 
     export default class Me extends wepy.page {
         config = {
-            backgroundTextStyle: 'dark',
-            navigationBarTitleText: '我的',
-            navigationBarBackgroundColor: '#333745',
-            navigationBarTextStyle: '#fff',
-            backgroundColor: '#333745'
+            navigationStyle: 'custom'
         }
         data = {
             // 用户信息
             user: null,
-            image_url : ''
+            image_url : '',
+            auth_user: null
         }
-        async onShow() {
+        // 获取用户数据
+        async getUser(name){
+            try {
+                let userResponse = await api.request({
+                    url: 'users/' + name,
+                    header: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                this.user = userResponse.data.data
+                this.$apply()
+            } catch (err) {
+                console.log(err)
+                wepy.showModal({
+                    title: '提示',
+                    content: '服务器错误，请联系管理员'
+                })
+            }
+        }
+        async followUser() {
+            try {
+                let userResponse = await api.request({
+                    url: 'users/' + this.user.id + '/follow',
+                    method: 'POST',
+                    header: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                if (userResponse.statusCode === 201) {
+                    this.user.is_following = ! this.user.is_following;
+                    this.$apply()
+                }
+            }catch (err) {
+                console.log(err)
+                wepy.showModal({
+                    title: '提示',
+                    content: '服务器错误，请联系管理员'
+                })
+            }
+        } catch (err) {
+            console.log(err)
+            wepy.showModal({
+                title: '提示',
+                content: '服务器错误，请联系管理员'
+            })
+        }
+        async updateAvatar () {
+            // 选择头像图片
+            let image = await wepy.chooseImage({count: 1})
+
+            try {
+                // 获取选择的图片
+                let avatar = image.tempFilePaths[0]
+
+                // 调用上传图片接口
+                let imageResponse = await api.updateFile({
+                    url: 'users/' + this.auth_user.name + '/wx_avatar',
+                    method: 'POST',
+                    name: 'image',
+                    formData: {
+                        type: 'avatar'
+                    },
+                    header: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    filePath: avatar
+                })
+
+                // 上传成功成功记录数据
+                if (imageResponse.statusCode === 200) {
+                    // 小程序上传结果没有做 JSON.parse，需要手动处理
+                    let responseData = JSON.parse(imageResponse.data)
+                    this.user.avatar = responseData.relative_url
+                    this.auth_user.avatar = responseData.relative_url
+                    wepy.setStorageSync('user', this.auth_user)
+                    this.$apply()
+                }
+            } catch (err) {
+                console.log(err)
+                wepy.showModal({
+                    title: '提示',
+                    content: '服务器错误，请联系管理员'
+                })
+            }
+        }
+        async updateBg () {
+            // 选择头像图片
+            let image = await wepy.chooseImage({count: 1})
+
+            try {
+                // 获取选择的图片
+                let avatar = image.tempFilePaths[0]
+
+                // 调用上传图片接口
+                let imageResponse = await api.updateFile({
+                    url: 'users/' + this.auth_user.name + '/wx_avatar',
+                    method: 'POST',
+                    name: 'image',
+                    formData: {
+                        type: 'wx_bg'
+                    },
+                    header: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    filePath: avatar
+                })
+
+                // 上传成功成功记录数据
+                if (imageResponse.statusCode === 200) {
+                    // 小程序上传结果没有做 JSON.parse，需要手动处理
+                    let responseData = JSON.parse(imageResponse.data)
+                    this.auth_user.wx_bg = responseData.relative_url
+                    this.user.wx_bg = responseData.relative_url
+                    wepy.setStorageSync('user', this.auth_user)
+                    this.$apply()
+                }
+            } catch (err) {
+                console.log(err)
+                wepy.showModal({
+                    title: '提示',
+                    content: '服务器错误，请联系管理员'
+                })
+            }
+        }
+        methods = {
+            bindCommentMessageInput(e) {
+                this.message = e.detail.value
+            }
+        }
+        async onLoad(options) {
             this.image_url = imageUrl
-            // 每次打开页面，获取当前用户信息
-            this.user = await this.$parent.getCurrentUser()
+            // 获取当前用户信息
+            this.auth_user = await this.$parent.getCurrentUser()
+            this.getUser(options.name)
             this.$apply()
         }
     }
@@ -73,7 +219,7 @@
     .user_bg{
         padding: 0;
         width:100%;
-        height:120px;
+        height:344rpx;
         position: relative;
     }
 
@@ -96,7 +242,7 @@
         padding-top: 55px;
     }
     .page-body-user{
-        height: 150px;
+        height: 400rpx;
         position: relative;
         text-align: center;
     }

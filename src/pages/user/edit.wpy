@@ -3,9 +3,9 @@
         <view class="page-body">
             <view class="page__bd">
                 <view class="zan-panel">
-                    <navigator class="zan-cell zan-cell--access" @tap="updateAvatar">
+                    <navigator class="zan-cell zan-cell--access" url="/pages/user/me?name={{ user.name }}">
                         <view class="zan-cell__bd">
-                            头像
+                            个人主页
                         </view>
                         <view class="zan-c-gray-darker">
                             <image class="avatar" src="{{ image_url + user.avatar }}"></image>
@@ -77,44 +77,6 @@
             // 获取当前用户信息
             this.user = await this.$parent.getCurrentUser()
             this.$apply()
-        }
-        async updateAvatar () {
-            // 选择头像图片
-            let image = await wepy.chooseImage({count: 1})
-
-            try {
-                // 获取选择的图片
-                let avatar = image.tempFilePaths[0]
-
-                // 调用上传图片接口
-                let imageResponse = await api.updateFile({
-                    url: 'users/' + this.user.name + '/wx_avatar',
-                    method: 'POST',
-                    name: 'image',
-                    formData: {
-                        type: 'avatar'
-                    },
-                    header: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    filePath: avatar
-                })
-
-                // 上传成功成功记录数据
-                if (imageResponse.statusCode === 200) {
-                    // 小程序上传结果没有做 JSON.parse，需要手动处理
-                    let responseData = JSON.parse(imageResponse.data)
-                    this.user.avatar = responseData.relative_url
-                    wepy.setStorageSync('user', this.user)
-                    this.$apply()
-                }
-            } catch (err) {
-                console.log(err)
-                wepy.showModal({
-                    title: '提示',
-                    content: '服务器错误，请联系管理员'
-                })
-            }
         }
         methods = {
             // 退出

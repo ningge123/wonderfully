@@ -40,13 +40,6 @@
                     </view>
                     <view class="weui-cell__ft weui-cell__ft_in-access"></view>
                 </navigator>
-                <navigator class="zan-cell zan-cell--access" url="/pages/user/me">
-                    <view class="zan-icon zan-icon-coupon" style="color:#FF7D00"></view>
-                    <view class="zan-cell__bd">
-                        个人页面
-                    </view>
-                    <view class="weui-cell__ft weui-cell__ft_in-access"></view>
-                </navigator>
             </view>
         </view>
     </view>

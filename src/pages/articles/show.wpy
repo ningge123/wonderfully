@@ -20,9 +20,11 @@
                         <view class="article">
                             <view class="article-info">
                                 <view class="article-author">
-                                    <view>
-                                        <image class="article-author-icon" src="{{ image_url + comment.reply_user.avatar }}"/>
-                                    </view>
+                                    <navigator url="/pages/user/me?name={{ comment.reply_user.name }}" hover-class="none">
+                                        <view>
+                                            <image class="article-author-icon" src="{{ image_url + comment.reply_user.avatar }}"/>
+                                        </view>
+                                    </navigator>
                                     <view class="article-author-info">
                                         <view>{{  comment.reply_user.name }}</view>
                                         <view>{{ comment.created_at.created_diff }}</view>
