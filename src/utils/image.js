@@ -1,1 +1,1 @@
-export const imageUrl = 'http://cocoyo.test'
+export const imageUrl = 'https://www.cocoyo.xin'

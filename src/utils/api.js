@@ -1,7 +1,7 @@
 import wepy from 'wepy'
 
 // 服务器接口地址
-const host = 'http://cocoyo.test/api'
+const host = __BASE_URL__
 
 // 普通请求
 const request = async (options, showLoading = true) => {

@@ -41,6 +41,13 @@ module.exports = {
     }
   },
   plugins: {
+      replace: {
+          filter: /\.js$/,
+          config: {
+              find: /__BASE_URL__/g,
+              replace: prod ? "'https://www.cocoyo.xin/api'" : "'http://cocoyo.test/api'"
+          }
+      }
   },
   appConfig: {
     noPromiseAPI: ['createSelectorQuery']
@@ -69,6 +76,13 @@ if (prod) {
           quality: 80
         }
       }
-    }
+    },
+      replace: {
+          filter: /\.js$/,
+          config: {
+              find: /__BASE_URL__/g,
+              replace: prod ? "'https://www.cocoyo.xin/api'" : "'http://cocoyo.test/api'"
+          }
+      }
   }
 }
