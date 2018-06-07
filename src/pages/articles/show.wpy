@@ -1,38 +1,43 @@
 <template>
     <view class="container">
-        <view class="page-body">
+        <view class="page-body" style="margin-bottom: 100px">
             <view class="page__bd">
                 <view class="article">
-                    <view class="zan-font-16 zan-font-bold">MYSQL 变量详情</view>
+                    <view class="zan-font-16 zan-font-bold">{{ article.title }}</view>
                     <view class="media-box__info">
-                        <view class="media-box__info__meta">原创 : cocoyo</view>
-                        <view class="media-box__info__meta media-box__info__meta_extra">三天前</view>
+                        <view class="media-box__info__meta" wx:if="{{ article.is_original }}">原创</view>
+                        <view class="media-box__info__meta">{{ article.user.name }}</view>
+                        <view class="media-box__info__meta media-box__info__meta_extra">{{ article.published_time }}</view>
                     </view>
                     <view class="media-box__body">
                         <import src="/markdown/entry.wxml"/>
-                        <template is="entry" data="{{...article}}"/>
+                        <template is="entry" data="{{...article.content}}"/>
                     </view>
                 </view>
                 <view>
-                    <view class="resp-head">全部回复（100）</view>
+                    <view class="resp-head">全部回复（{{ article.comments_count }}）</view>
                     <repeat for="{{ comments }}" key="" index="index" item="comment">
                         <view class="article">
                             <view class="article-info">
                                 <view class="article-author">
                                     <view>
-                                        <image class="article-author-icon" src="https://lccdn.phphub.org/uploads/avatars/10797_1523929716.jpg?imageView2/1/w/100/h/100"/>
+                                        <image class="article-author-icon" src="{{ image_url + comment.reply_user.avatar }}"/>
                                     </view>
                                     <view class="article-author-info">
-                                        <view>cocoyo</view>
-                                        <view>2018-06-25</view>
+                                        <view>{{  comment.reply_user.name }}</view>
+                                        <view>{{ comment.created_at.created_diff }}</view>
                                     </view>
                                 </view>
                                 <view class="article-author-position">
-                                    <view>10楼</view>
+                                    <view>{{ index + 1 }}楼</view>
                                 </view>
                             </view>
                             <view>
-                                这是一个回复
+                                <view class="zan-c-red" wx:if="{{ comment.parent_id }}">
+                                    @{{ comment.user.name }}
+                                </view>
+                                <import src="/markdown/entry.wxml"/>
+                                <template is="entry" data="{{...comment.content.raw}}"/>
                             </view>
                         </view>
                     </repeat>
@@ -40,68 +45,133 @@
             </view>
         </view>
         <view class="page-tail">
-            <view class="resp-input-cell">
-                <input class="resp-input" type="text" placeholder="说点什么吧..." bindinput="input_message" value="{{message}}"/>
-            </view>
-            <view class="resp-btn" bindtap="submit_message">回复</view>
+            <block wx:if="{{ user }}">
+                <view class="resp-input-cell">
+                    <input class="resp-input" type="text" value="{{ message }}" placeholder="说点什么吧..." bindinput="bindCommentMessageInput"/>
+                </view>
 
-            <!--<navigator class="need-login" url="/pages/login/login">点此处登录之后，即可回复本帖</navigator>-->
+                <view class="resp-btn" @tap="submit">回复</view>
+            </block>
+            <navigator wx:else class="need-login" url="/pages/auth/login">点此处登录之后，即可回复文章😆</navigator>
         </view>
-        <!--<block wx:if="{{scroll_show}}">-->
-        <!--<view class="scroll-to-top" bindtap="scrollToTop">-->
-        <!--<image class="scroll-to-top-img" src="../../resources/image/top.png"/>-->
-        <!--</view>-->
-        <!--</block>-->
     </view>
 </template>
 
 <script>
     import wepy from 'wepy'
+    import api from '@/utils/api'
+    import {imageUrl} from "../../utils/image";
+
     export default class Show extends wepy.page {
         config = {
             navigationBarTitleText: '文章详情'
         }
         data = {
-            article : '',
-            comments: [
-                {
-                    id: 1
-                },
-                {
-                    id: 1
-                },
-                {
-                    id: 1
-                },
-                {
-                    id: 1
-                }
-            ]
+            article : {},
+            comments: [],
+            image_url : '',
+            user : null,
+            message: ''
         }
-        onLoad() {
-            const Towxml = require('towxml')
-            const towxml = new Towxml();
-            wx.request({
-                url: 'https://raw.githubusercontent.com/overtrue/laravel-emoji/master/README.md',
-                header: {
-                    'content-type': 'application/x-www-form-urlencoded'
-                },
-                success: (res) => {
-                    let content = res.data;
+        async submit(e) {
+           if (! this.message) {
+               return
+           }
 
+            try {
+                // 请求发布回复接口
+                let createResponse = await api.request({
+                    url: 'comments',
+                    method: 'POST',
+                    data: {
+                        content: this.message,
+                        commentable_id: this.article.id,
+                        commentable_type: 'article',
+                    },
+                    header: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+
+                if (createResponse.statusCode === 200) {
+                    let comment = createResponse.data.data
+                    const Towxml = require('towxml')
+                    const towxml = new Towxml();
                     //将文件转换成为towxml支持的json数据
-                    let data = towxml.toJson(content, 'markdown');
-            // let data = towxml.toJson('<audio></audio>','html');
-            // let data = towxml.toJson('<div>&lt;tml</div>', 'html');
+                    comment.content.raw = towxml.toJson(comment.content.raw, 'markdown');
 
-
-            //         //更新数据并隐藏loading...
-                    this.article = data;
-                    this.$apply();
+                    this.comments.push(comment)
+                    this.message = ''
+                    this.$apply()
                 }
-            });
 
+                // 提示发布成功
+                wepy.showToast({
+                    title: '评论成功',
+                    icon: 'success'
+                })
+            } catch (err) {
+                console.log(err)
+                wepy.showModal({
+                    title: '提示',
+                    content: '服务器错误，请联系管理员'
+                })
+            }
         }
+        // 获取文章数据
+        async getArticle(slug){
+            try {
+                let articleResponse = await api.request({
+                    url: 'articles/' + slug,
+                    header: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                let article = articleResponse.data.data
+                const Towxml = require('towxml')
+                const towxml = new Towxml();
+                //将文件转换成为towxml支持的json数据
+                article.content = towxml.toJson(article.content, 'markdown');
+
+                this.article = article
+                if (article.comments_count) {
+                    let commentsResponse = await
+                    api.request({
+                        url: 'commentable/' + article.id + '/wx_comment',
+                        header: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    let comments = commentsResponse.data.data
+
+                    for (let i = 0; i < comments.length; i++) {
+                        comments[i].content.raw = towxml.toJson(comments[i].content.raw, 'markdown');
+                    }
+                    this.comments = comments
+                }
+
+                this.$apply()
+            } catch (err) {
+                console.log(err)
+                wepy.showModal({
+                    title: '提示',
+                    content: '服务器错误，请联系管理员'
+                })
+            }
+         }
+         methods = {
+             bindCommentMessageInput(e) {
+                 this.message = e.detail.value
+             }
+         }
+        async onLoad(options) {
+            this.getArticle(options.slug)
+            this.image_url = imageUrl
+            // 获取当前用户信息
+            this.user = await this.$parent.getCurrentUser()
+            this.$apply()
+        }
+
     }
 </script>
 

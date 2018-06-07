@@ -1,29 +1,34 @@
 <style lang="less">
     @import 'style/weui.less';
     @import "/style/zanui.wxss";
+
     page {
         background-color: #f3f3f3;
         height: 100%;
         font-size: 28rpx;
         line-height: 1.6;
     }
-    checkbox, radio{
-        margin-right: 10rpx;
+
+    checkbox, radio {
+        margin-right: 10 rpx;
     }
-    button{
-        margin-top: 20rpx;
-        margin-bottom: 20rpx;
+
+    button {
+        margin-top: 20 rpx;
+        margin-bottom: 20 rpx;
         font-size: 16px;
     }
-    form{
+
+    form {
         width: 100%;
     }
 
     /* lib */
-    .strong{
+    .strong {
         font-weight: bold;
     }
-    .tc{
+
+    .tc {
         text-align: center;
     }
 
@@ -33,30 +38,34 @@
         flex-direction: column;
         min-height: 100%;
         justify-content: space-between;
-        font-size: 28rpx;
-        padding:0 20rpx;
-        font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+        font-size: 28 rpx;
+        padding: 0 20 rpx;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     }
-    .page-head{
-        padding: 60rpx 50rpx 80rpx;
+
+    .page-head {
+        padding: 60 rpx 50 rpx 80 rpx;
         text-align: center;
     }
-    .page-head-title{
+
+    .page-head-title {
         display: inline-block;
-        padding: 0 40rpx 20rpx 40rpx;
-        font-size: 32rpx;
+        padding: 0 40 rpx 20 rpx 40 rpx;
+        font-size: 32 rpx;
         color: #BEBEBE;
     }
-    .page-head-line{
+
+    .page-head-line {
         margin: 0 auto;
-        width: 150rpx;
-        height: 2rpx;
+        width: 150 rpx;
+        height: 2 rpx;
         background-color: #D8D8D8;
     }
-    .page-head-desc{
-        padding-top: 20rpx;
+
+    .page-head-desc {
+        padding-top: 20 rpx;
         color: #9B9B9B;
-        font-size: 32rpx;
+        font-size: 32 rpx;
     }
 
     .page-body {
@@ -71,146 +80,196 @@
         align-items: center;
         width: 100%;
     }
+
     .page-body-wording {
         text-align: center;
-        padding: 200rpx 100rpx;
+        padding: 200 rpx 100 rpx;
     }
+
     .page-body-info {
         display: flex;
         flex-direction: column;
         align-items: center;
         background-color: #fff;
         width: 100%;
-        padding: 50rpx 0 150rpx 0;
+        padding: 50 rpx 0 150 rpx 0;
     }
+
     .page-body-title {
-        margin-bottom: 100rpx;
-        font-size: 32rpx;
+        margin-bottom: 100 rpx;
+        font-size: 32 rpx;
     }
+
     .page-body-text {
-        font-size: 30rpx;
+        font-size: 30 rpx;
         line-height: 26px;
         color: #ccc;
     }
+
     .page-body-text-small {
-        font-size: 24rpx;
+        font-size: 24 rpx;
         color: #000;
-        margin-bottom: 100rpx;
+        margin-bottom: 100 rpx;
     }
 
-    .page__bd{
-        margin-top:20rpx;
+    .page__bd {
+        margin-top: 20 rpx;
     }
 
-    .page-foot{
-        margin: 100rpx 0 30rpx 0;
+    .page-foot {
+        margin: 100 rpx 0 30 rpx 0;
         text-align: center;
         color: #1aad19;
         font-size: 0;
     }
-    .icon-foot{
-        width: 152rpx;
-        height: 23rpx;
+
+    .icon-foot {
+        width: 152 rpx;
+        height: 23 rpx;
     }
 
     .cells-no-border {
-        font-size: 30rpx;
-        border-radius: 10rpx;
+        font-size: 30 rpx;
+        border-radius: 10 rpx;
     }
 
     .cells-no-border::after, .cells-no-border::before {
-        border:none;
+        border: none;
     }
-    .zan-btn--red{
+
+    .zan-btn--red {
         background-color: #ff5b59;
-        border-radius:28px;
-        color:#fff;
+        border-radius: 28px;
+        color: #fff;
+    }
+    .badge-wonderfully{
+        display:inline-block;
+        padding:0.3em;
+        border-radius:50%;
+        background-color:#E64340;
+        color:#FFFFFF;
+        line-height:1.2;
+        text-align:center;
+        vertical-align:middle;
     }
 </style>
 
 <script>
-import wepy from 'wepy'
-import 'wepy-async-function'
-import api from '@/utils/api'
+    import wepy from 'wepy'
+    import 'wepy-async-function'
+    import api from '@/utils/api'
 
 
-export default class extends wepy.app {
-  config = {
-    pages: [
-      'pages/articles/index',
-      'pages/articles/show',
-      'pages/user/index',
-      'pages/user/edit',
-      'pages/user/edit_email',
-      'pages/user/edit_name',
-      'pages/user/edit_github',
-      'pages/user/edit_website',
-      'pages/user/edit_description',
-      'pages/auth/login',
-      'pages/auth/register',
-    ],
-    window: {
-      backgroundTextStyle: 'light',
-      navigationBarBackgroundColor: '#fff',
-      navigationBarTitleText: 'wonderfully',
-      navigationBarTextStyle: 'black'
-    },
-      tabBar: {
-          list: [{
-              pagePath: 'pages/articles/index',
-              text: '首页',
-              iconPath: 'images/home.png',
-              selectedIconPath: 'images/home_selected.png'
-          }, {
-              pagePath: 'pages/user/index',
-              text: '我的',
-              iconPath: 'images/user.png',
-              selectedIconPath: 'images/user_selected.png'
-          }],
-          color: '#707070',
-          selectedColor: '#d81e06',
-      }
-  }
-    constructor () {
-        super()
-        this.use('requestfix')
-        this.use('promisify')
-    }
-   // 获取当前登录用户信息
-    async getCurrentUser () {
-        // 如果用户未登录
-        if (!this.checkLogin()) {
-            return null
-        }
-
-        // 从缓存中获取用户信息
-        let user = wepy.getStorageSync('user')
-
-        try {
-            // 登录了但是缓存中没有，请求接口获取
-            if (!user) {
-                let userResponse = await api.request('user')
-                // 状态码为 200 表示请求成功
-                if (userResponse.statusCode === 200) {
-                    user = userResponse.data.data
-                    wepy.setStorageSync('user', user)
-                }
+    export default class extends wepy.app {
+        config = {
+            pages: [
+                'pages/articles/index',
+                'pages/articles/show',
+                'pages/user/index',
+                'pages/user/edit',
+                'pages/user/edit_email',
+                'pages/user/edit_name',
+                'pages/user/edit_github',
+                'pages/user/edit_website',
+                'pages/user/edit_description',
+                'pages/user/notifications',
+                'pages/user/follows',
+                'pages/user/me',
+                'pages/auth/login',
+                'pages/auth/register',
+            ],
+            window: {
+                backgroundTextStyle: 'light',
+                navigationBarBackgroundColor: '#fff',
+                navigationBarTitleText: 'wonderfully',
+                navigationBarTextStyle: 'black'
+            },
+            tabBar: {
+                list: [{
+                    pagePath: 'pages/articles/index',
+                    text: '首页',
+                    iconPath: 'images/home.png',
+                    selectedIconPath: 'images/home_selected.png'
+                }, {
+                    pagePath: 'pages/user/index',
+                    text: '我的',
+                    iconPath: 'images/user.png',
+                    selectedIconPath: 'images/user_selected.png'
+                }],
+                color: '#707070',
+                selectedColor: '#d81e06',
             }
-        } catch (err) {
-            console.log(err)
-            wepy.showModal({
-                title: '提示',
-                content: '服务器错误，请联系管理员'
-            })
+        }
+        globalData = {
+            refreshPages: [],
+            unreadCount: 0
         }
 
-        return user
+        constructor() {
+            super()
+            this.use('requestfix')
+            this.use('promisify')
+        }
+
+        // 获取当前登录用户信息
+        async getCurrentUser() {
+            // 如果用户未登录
+            if (!this.checkLogin()) {
+                return null
+            }
+
+            // 从缓存中获取用户信息
+            let user = wepy.getStorageSync('user')
+
+            try {
+                // 登录了但是缓存中没有，请求接口获取
+                if (!user) {
+                    let userResponse = await api.request('user')
+                    // 状态码为 200 表示请求成功
+                    if (userResponse.statusCode === 200) {
+                        user = userResponse.data.data
+                        wepy.setStorageSync('user', user)
+                    }
+                }
+            } catch (err) {
+                console.log(err)
+                wepy.showModal({
+                    title: '提示',
+                    content: '服务器错误，请联系管理员'
+                })
+            }
+
+            return user
+        }
+
+        onLaunch() {
+            // 小程序启动，调用一起获取未读消息数
+            this.updateUnreadCount()
+            // 每隔 60 秒，调用一起获取未读消息数
+            setInterval(() => {
+                this.updateUnreadCount()
+            }, 60000)
+        }
+
+        // 用户是否已经登录
+        checkLogin() {
+            return (wepy.getStorageSync('access_token') !== '')
+        }
+
+        // 获取未读消息数
+        async updateUnreadCount() {
+            // 未登录不需要请求
+            if (!this.checkLogin()) {
+                return
+            }
+
+            // 请求消息统计接口
+            let notificationResponse = await api.request('notifications/count', false)
+
+            //  请求成功，赋值全局变量 unreadCount
+            if (notificationResponse.statusCode === 200) {
+                this.globalData.unreadCount = notificationResponse.data.count
+            }
+        }
     }
-  onLaunch() {
-  }
-    // 用户是否已经登录
-    checkLogin () {
-        return (wepy.getStorageSync('access_token') !== '')
-    }
-}
 </script>

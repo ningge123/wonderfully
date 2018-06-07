@@ -31,23 +31,23 @@
                 <view class="zan-panel">
                     <navigator class="zan-cell zan-cell--access" url="/pages/user/edit_description">
                         <view class="zan-cell__bd">
-                            我的描述
+                            个性签名
                         </view>
-                        <view class="zan-c-gray-darker">{{ user.description }}</view>
+                        <view class="zan-c-gray-darker">{{ user.description ? user.description : '' }}</view>
                         <view class="weui-cell__ft weui-cell__ft_in-access"></view>
                     </navigator>
                     <navigator class="zan-cell zan-cell--access" url="/pages/user/edit_github">
                         <view class="zan-cell__bd">
                             我的GitHub
                         </view>
-                        <view class="zan-c-gray-darker">{{ user.github_name }}</view>
+                        <view class="zan-c-gray-darker">{{ user.github_name ? user.github_name : '' }}</view>
                         <view class="weui-cell__ft weui-cell__ft_in-access"></view>
                     </navigator>
                     <navigator class="zan-cell zan-cell--access" url="/pages/user/edit_website">
                         <view class="zan-cell__bd">
                             我的个人网站
                         </view>
-                        <view class="zan-c-gray-darker">{{ user.website }}</view>
+                        <view class="zan-c-gray-darker">{{ user.website ? user.website : '' }}</view>
                         <view class="weui-cell__ft weui-cell__ft_in-access"></view>
                     </navigator>
                 </view>

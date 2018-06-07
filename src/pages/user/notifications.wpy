@@ -1,0 +1,100 @@
+<template>
+    <view class="container">
+        <view class="page-body">
+            <view class="page__bd">
+                <repeat for="{{ notifications }}" key="" index="index" item="notification">
+                    <navigator url="/pages/articles/show?slug={{ notification.data.commentable.slug }}" hover-class="navigator-hover"  wx:if="{{ notification.type == 'received-comment-notification' }}">
+                        <view class="zan-panel">
+                            <view class="zan-icon zan-icon-shop-collect reset-icon"></view>
+                            <view class="zan-panel-media">
+                                <view class="zan-c-gray-dark zan-font-12">
+                                    <view class="zan-panel-box">系统通知</view>
+                                    <view class="zan-panel-box">{{ notification.created_diff }}</view>
+                                </view>
+                                <view class="zan-font-14" style="padding:10px 0">{{ notification.data.reply_user.name }} • 在 {{ notification.data.commentable.title }} 的评论提及了你 • 58分钟前</view>
+                                <view class="zan-c-gray zan-font-12">点击查看</view>
+                            </view>
+                        </view>
+                    </navigator>
+
+                    <view class="zan-panel" wx:if="{{ notification.type == 'followed-user-notification' }}">
+                        <view class="zan-icon zan-icon-goods-collect reset-icon" style="color: #ff4343;"></view>
+                        <view class="zan-panel-media">
+                            <view class="zan-c-gray-dark zan-font-12">
+                                <view class="zan-panel-box">系统通知</view>
+                                <view class="zan-panel-box">{{ notification.created_diff }}</view>
+                            </view>
+                            <view class="zan-font-14" style="padding:10px 0">{{ notification.data.name }} • 关注了你</view>
+                            <view class="zan-c-gray zan-font-12">可以在关注列表查看</view>
+                        </view>
+                    </view>
+
+                </repeat>
+                <view class="weui-loadmore weui-loadmore_line">
+                    <view class="weui-loadmore__tips weui-loadmore__tips_in-line">我是有底线的</view>
+                </view>
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import api from '@/utils/api'
+
+    export default class Notifications extends wepy.page {
+        config = {
+            navigationBarTitleText: '我的消息',
+        }
+        data = {
+            notifications: null
+        }
+        // 获取消息数据
+        async getNotifications() {
+            try {
+                // 请求话题列表接口
+                let notificationsResponse = await api.request({
+                    url: 'notifications',
+                    header: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                this.notifications = notificationsResponse.data.data
+                this.$apply()
+            } catch (err) {
+                console.log(err)
+                wepy.showModal({
+                    title: '提示',
+                    content: '服务器错误，请联系管理员'
+                })
+            }
+        }
+        async onLoad() {
+            this.getNotifications()
+        }
+    }
+</script>
+
+<style>
+    .container{
+        padding: 0;
+    }
+    .zan-panel{
+        padding: 10px;
+    }
+    .reset-icon{
+        font-size:25px;
+        color:#41C4FF;
+        float: left;
+        margin-right:15px;
+        width:7%;
+        height:100px;
+    }
+    /*.zan-panel-media{*/
+        /*float: left;*/
+    /*}*/
+    .zan-panel-box{
+        display: inline-block;
+        margin-right: 10px;
+    }
+</style>

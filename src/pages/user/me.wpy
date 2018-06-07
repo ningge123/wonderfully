@@ -1,0 +1,126 @@
+<template>
+    <view class="container">
+        <view class="page-body">
+            <view class="page-body-user">
+                <view class="user_bg" style="background-color:#fe5f55"></view>
+                <view class="weui-cell__hd user_avatar">
+                    <image class="avatar" src="{{ image_url + user.avatar }}"/>
+                </view>
+            </view>
+            <view style="text-align: center">
+                <view class="weui-cell__bd">
+                    <view class="zan-font-16 zan-font-bold" v:if="{{ user.name }}">{{ user.name }}</view>
+                    <view class="zan-c-gray-dark introduction" v:if="{{ user.description }}">{{ user.description }}</view>
+                </view>
+            </view>
+            <view class="page-body-detail">
+                <view class="page-block-label">
+                    <view class="zan-c-gray page-body-pd">邮箱地址</view>
+                    <view class="zan-c-gray page-body-pd">GitHub昵称</view>
+                    <view class="zan-c-gray page-body-pd">微博地址</view>
+                    <view class="zan-c-gray page-body-pd">个人网站</view>
+                </view>
+                <view class="page-box">
+                    <view class="page-body-pd">2430114823@qq.com</view>
+                    <view class="page-body-pd">Cocoyo123</view>
+                    <view class="page-body-pd">cocoyo</view>
+                    <view class="page-body-pd">https://www.cocoyo.xin</view>
+                </view>
+                <view>
+                    <view class="zan-font-12 zan-icon zan-icon-edit zan-c-blue"> 编辑个人资料</view>
+                </view>
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import api from '@/utils/api'
+    import {imageUrl} from "../../utils/image";
+
+    export default class Me extends wepy.page {
+        config = {
+            backgroundTextStyle: 'dark',
+            navigationBarTitleText: '我的',
+            navigationBarBackgroundColor: '#333745',
+            navigationBarTextStyle: '#fff',
+            backgroundColor: '#333745'
+        }
+        data = {
+            // 用户信息
+            user: null,
+            image_url : ''
+        }
+        async onShow() {
+            this.image_url = imageUrl
+            // 每次打开页面，获取当前用户信息
+            this.user = await this.$parent.getCurrentUser()
+            this.$apply()
+        }
+    }
+</script>
+
+<style>
+    .container{
+        padding: 0;
+        background-color: #fff;
+    }
+    .zan-panel{
+        margin-top: 0;
+    }
+
+    .user_bg{
+        padding: 0;
+        width:100%;
+        height:120px;
+        position: relative;
+    }
+
+    .avatar {
+        width: 70px;
+        height: 70px;
+        border-radius: 10%;
+        margin-right: 10px;
+    }
+    .weui-cell__bd{
+        height: 50px;
+    }
+    .introduction {
+        padding: 10px 0;
+    }
+    .name{
+        color:#fff;
+    }
+    .zan-cell-pd{
+        padding-top: 55px;
+    }
+    .page-body-user{
+        height: 150px;
+        position: relative;
+        text-align: center;
+    }
+    .page-body-detail{
+        padding: 20px;
+    }
+    .user_avatar{
+        position:absolute;
+        bottom:1px;
+        width:100%;
+    }
+    .page-block{
+        display: inline-block;
+    }
+    .page-block-label{
+        text-align: left;
+        float: left;
+        vertical-align: middle;
+        box-sizing: border-box;
+        margin-right:121rpx;
+
+    }
+    .page-body-pd{
+        padding: 10px 0;
+    }
+</style>
+

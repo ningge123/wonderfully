@@ -119,7 +119,6 @@
   .article-message{
     margin:10rpx 0;
     color: #909090;
-    font-size: 30rpx;
   }
 
   .article-ext-info{
@@ -159,6 +158,9 @@
     border-radius: 50%;
     opacity: 0.9;
   }
+  .page__bd{
+    padding: 0 10px;
+  }
 </style>
 
 <template>
@@ -167,43 +169,46 @@
       <view class="page__bd">
         <repeat for="{{ articles }}" key="" index="index" item="article">
           <view class="article">
-            <navigator url="/pages/articles/show" hover-class="navigator-hover">
+            <navigator url="/pages/articles/show?slug={{ article.slug }}" hover-class="navigator-hover">
             <view class="article-content">
               <view class="article-header">
                 <view class="article-author-avatar">
-                  <image src="https://lccdn.phphub.org/uploads/avatars/10797_1523929716.jpg?imageView2/1/w/100/h/100"></image>
+                  <image src="{{ image_url + article.user.avatar }}"></image>
                 </view>
                 <view class="article-side-header">
                   <view class="article-sub-header">
-                    <view class="article-title">Laravel 广播系统例子</view>
+                    <view class="article-title">{{ article.title }}</view>
                   </view>
                   <view class="article-info">
                     <view class="article-by">by</view>
-                    <view class="article-author">cocoyo</view>
+                    <view class="article-author">{{ article.user.name }}</view>
                   </view>
                 </view>
               </view>
               <view class="article-img">
                 <view class="article-img-info">
-                  <image class="article-img-item" src='https://www.cocoyo.xin//storage/201805/22/naoCDXMwuXXe4jdE9v28sz8OqkX5k1NoWBHMMH91.png'></image>
+                  <image class="article-img-item" src='{{ image_url + article.page_image }}'></image>
                 </view>
               </view>
-              <view class="article-message">
-                稍稍了解laravel广播
+              <view class="article-message zan-font-12">
+                {{ article.meta_description }}
               </view>
               <view class="article-ext-info">
                 <view class="article-re">
                   <view class="zan-icon zan-icon-password-view"></view>
-                  <view>100</view>
+                  <view>{{ article.visitors }}</view>
                   <view class="zan-icon zan-icon-chat"></view>
-                  <view>200</view>
+                  <view>{{ article.comments_count }}</view>
                 </view>
-                <view class="article-post-time">2018-09-18</view>
+                <view class="article-post-time">{{ article.created_at }}</view>
               </view>
             </view>
             </navigator>
           </view>
         </repeat>
+          <view class="weui-loadmore weui-loadmore_line" wx:if="{{ noMoreData }}">
+              <view class="weui-loadmore__tips weui-loadmore__tips_in-line">我是有底线的</view>
+          </view>
       </view>
     </view>
   </view>
@@ -211,36 +216,72 @@
 
 <script>
     import wepy from 'wepy'
+    import api from '@/utils/api'
+    import {imageUrl} from "../../utils/image";
+    import unreadCount from '@/mixins/unreadCount'
+
     export default class Index extends wepy.page {
         config = {
             navigationBarTitleText: 'wonderfully',
+            enablePullDownRefresh: true
         }
+        mixins = [unreadCount]
         components = {}
         data = {
-            articles: [
-                {
-                    'title' : 'Laravel 广播系统例子',
-                    'description' : '稍稍了解laravel广播'
-                },
-                {
-                    'title' : 'Laravel 广播系统例子',
-                    'description' : '稍稍了解laravel广播'
-                },
-                {
-                    'title' : 'Laravel 广播系统例子',
-                    'description' : '稍稍了解laravel广播'
-                },
-                {
-                    'title' : 'Laravel 广播系统例子',
-                    'description' : '稍稍了解laravel广播'
-                },
-                {
-                    'title' : 'Laravel 广播系统例子',
-                    'description' : '稍稍了解laravel广播'
-                }
-            ]
+            articles: [],
+            // 当前分页
+            page: 1,
+            noMoreData: false,
+            image_url: ''
         }
-        methods = {}
-        onLoad() {}
+        // 获取话题数据
+        async getArticles(page = 1, reset = false) {
+            try {
+                // 请求话题列表接口
+                let articlesResponse = await api.request({
+                    url: 'articles',
+                    data: {
+                        page: page,
+                    },
+                    header: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                let articles = articlesResponse.data.data
+                // 如果传入参数 reset 为true，则覆盖 articles
+                this.articles = reset ? articles : this.articles.concat(articles)
+
+                let pagination = articlesResponse.data.meta
+                // 根据分页设置是否还有更多数据
+                if (pagination.current_page === pagination.last_page) {
+                    this.noMoreData = true
+                }
+                this.$apply()
+            } catch (err) {
+                console.log(err)
+                wepy.showModal({
+                    title: '提示',
+                    content: '服务器错误，请联系管理员'
+                })
+            }
+        }
+        async onLoad() {
+            this.image_url = imageUrl
+            this.getArticles()
+        }
+        async onPullDownRefresh() {
+            this.page = 1
+            await this.getArticles(1, true)
+            wepy.stopPullDownRefresh()
+        }
+        async onReachBottom () {
+            // 如果没有更多内容，直接返回
+            if (this.noMoreData) {
+                return
+            }
+            this.page = this.page + 1
+            await this.getArticles(this.page)
+            this.$apply()
+        }
     }
 </script>

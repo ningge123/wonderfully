@@ -1,0 +1,88 @@
+<template>
+    <view class="container">
+        <view class="page-body">
+            <view class="page__bd">
+                <repeat for="{{ follows }}" key="" index="index" item="follow">
+                    <view class="zan-panel">
+                        <image class="reset-icon" src="{{ image_url + follow.avatar }}"></image>
+                        <view class="zan-panel-media">
+                            <view class="zan-c-gray-dark zan-font-12">
+                                <view class="zan-panel-box" style="color:#9574EA">{{ follow.name }}</view>
+                                <view class="zan-panel-box">{{ follow.created_at }}</view>
+                            </view>
+                            <view class="zan-font-14" style="padding:10px 0">{{ follow.description }}</view>
+                        </view>
+                    </view>
+                </repeat>
+                <view class="weui-loadmore weui-loadmore_line">
+                    <view class="weui-loadmore__tips weui-loadmore__tips_in-line">我是有底线的</view>
+                </view>
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import api from '@/utils/api'
+    import {imageUrl} from "../../utils/image";
+
+    export default class Follow extends wepy.page {
+        config = {
+            navigationBarTitleText: '我的关注',
+        }
+        data = {
+            user: null,
+            follows: [],
+            image_url: ''
+        }
+        // 获取关注列表
+        async getFollows() {
+            try {
+                // 请求话题列表接口
+                let followsResponse = await api.request({
+                    url: 'users/' + this.user.name + '/following',
+                    header: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                this.follows = followsResponse.data.data
+                this.$apply()
+            } catch (err) {
+                console.log(err)
+                wepy.showModal({
+                    title: '提示',
+                    content: '服务器错误，请联系管理员'
+                })
+            }
+        }
+        async onLoad() {
+            this.image_url = imageUrl
+            this.user = await this.$parent.getCurrentUser()
+            this.getFollows()
+        }
+    }
+</script>
+
+<style>
+    .container{
+        padding: 0;
+    }
+    .zan-panel{
+        padding: 10px;
+    }
+    .reset-icon{
+        font-size:25px;
+        color:#41C4FF;
+        float: left;
+        margin-right:15px;
+        width:50px;
+        border-radius:10px;
+        height:50px;
+    }
+    .zan-panel-box{
+        display: inline-block;
+        margin-right: 10px;
+    }
+</style>
+
