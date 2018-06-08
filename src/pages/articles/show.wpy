@@ -180,7 +180,7 @@
                 title: this.article.title,
                 // 路径为话题详情路径
                 path: '/pages/articles/show?slug=' + this.article.slug,
-                imageUrl: this.image_url + this.article.page_image,
+                imageUrl: this.image_url + this.article.share_wx_image,
             }
         }
     }

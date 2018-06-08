@@ -108,12 +108,8 @@
   }
 
   .article-img-item {
-    position: absolute;
-    top: 50%;
-    left: 50%;
     width: 100%;
-    -webkit-transform: translate3d(-50%,-50%,0);
-    transform: translate3d(-50%,-50%,0);
+    height: 100%;
   }
 
   .article-message{
@@ -187,7 +183,7 @@
               </view>
               <view class="article-img">
                 <view class="article-img-info">
-                  <image class="article-img-item" src='{{ image_url + article.page_image }}'></image>
+                  <image class="article-img-item" src='{{ image_url + article.wx_image }}'></image>
                 </view>
               </view>
               <view class="article-message zan-font-12">
@@ -286,7 +282,7 @@
         onShareAppMessage (res) {
             return {
                 // 标题是话题标题
-                title: '火光描摹容颜燃尽了时间,别留我一人,孑然一身!',
+                title: '火光描摹容颜燃尽了时间,别留我一人孑然一身',
                 // 路径为话题详情路径
                 path: '/pages/articles/index',
                 imageUrl: '/images/carbon.jpg',
