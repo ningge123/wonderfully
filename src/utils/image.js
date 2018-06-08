@@ -1,1 +1,1 @@
-export const imageUrl = 'https://www.cocoyo.xin'
+export const imageUrl = __BASE_URL__

@@ -14,7 +14,7 @@
                         <template is="entry" data="{{...article.content}}"/>
                     </view>
                 </view>
-                <view>
+                <view style="padding: 0 10px">
                     <view class="resp-head">全部回复（{{ article.comments_count }}）</view>
                     <repeat for="{{ comments }}" key="" index="index" item="comment">
                         <view class="article">
@@ -40,6 +40,7 @@
                                 </view>
                                 <import src="/markdown/entry.wxml"/>
                                 <template is="entry" data="{{...comment.content.raw}}"/>
+
                             </view>
                         </view>
                     </repeat>
@@ -173,7 +174,15 @@
             this.user = await this.$parent.getCurrentUser()
             this.$apply()
         }
-
+        onShareAppMessage (res) {
+            return {
+                // 标题是话题标题
+                title: this.article.title,
+                // 路径为话题详情路径
+                path: '/pages/articles/show?slug=' + this.article.slug,
+                imageUrl: this.image_url + this.article.page_image,
+            }
+        }
     }
 </script>
 

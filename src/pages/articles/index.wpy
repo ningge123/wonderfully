@@ -283,5 +283,14 @@
             await this.getArticles(this.page)
             this.$apply()
         }
+        onShareAppMessage (res) {
+            return {
+                // 标题是话题标题
+                title: '火光描摹容颜燃尽了时间,别留我一人,孑然一身!',
+                // 路径为话题详情路径
+                path: '/pages/articles/index',
+                imageUrl: '/images/carbon.jpg',
+            }
+        }
     }
 </script>
