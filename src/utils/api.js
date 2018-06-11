@@ -39,6 +39,11 @@ const request = async (options, showLoading = true) => {
     }
 
     // 服务器异常后给与提示
+    if (response.statusCode === 401) {
+        wepy.clearStorage()
+    }
+
+    // 服务器异常后给与提示
     if (response.statusCode === 500) {
         wepy.showModal({
             title: '提示',

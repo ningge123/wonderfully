@@ -72,10 +72,30 @@
             user : null,
             image_url : ''
         }
+        // 获取用户数据
+        async getUser(name){
+            try {
+                let userResponse = await api.request({
+                    url: 'users/' + name,
+                    header: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                this.user = userResponse.data.data
+                this.$apply()
+            } catch (err) {
+                console.log(err)
+                wepy.showModal({
+                    title: '提示',
+                    content: '服务器错误，请联系管理员'
+                })
+            }
+        }
         async onShow() {
             this.image_url = imageUrl
             // 获取当前用户信息
-            this.user = await this.$parent.getCurrentUser()
+            let user = await this.$parent.getCurrentUser()
+            this.getUser(user.name)
             this.$apply()
         }
         methods = {

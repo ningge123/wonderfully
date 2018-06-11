@@ -60,7 +60,7 @@
 
     export default class Me extends wepy.page {
         config = {
-            navigationStyle: 'custom'
+            navigationStyle: 'custom',
         }
         data = {
             // 用户信息
