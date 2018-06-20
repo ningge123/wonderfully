@@ -95,6 +95,7 @@
             this.image_url = imageUrl
             // 获取当前用户信息
             let user = await this.$parent.getCurrentUser()
+            console.log(JSON.stringify(user));
             this.getUser(user.name)
             this.$apply()
         }
