@@ -1,7 +1,7 @@
 <template>
     <view class="container">
         <view class="page-body">
-            <view class="page-body-user">
+            <view class="page-body-user" wx:if="{{ user.avatar }}">
                 <image wx:if="user.id == auth_user.id" @tap="updateBg" class="user_bg" mode="aspectFill" src="{{ image_url + (user.wx_bg ? user.wx_bg : user.avatar) }}"></image>
                 <image wx:else class="user_bg" mode="aspectFill" src="{{ image_url + (user.wx_bg ? user.wx_bg : user.avatar) }}"></image>
                 <view class="weui-cell__hd user_avatar">
@@ -67,25 +67,6 @@
             user: null,
             image_url : '',
             auth_user: null
-        }
-        // 获取用户数据
-        async getUser(name){
-            try {
-                let userResponse = await api.request({
-                    url: 'users/' + name,
-                    header: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                this.user = userResponse.data.data
-                this.$apply()
-            } catch (err) {
-                console.log(err)
-                wepy.showModal({
-                    title: '提示',
-                    content: '服务器错误，请联系管理员'
-                })
-            }
         }
         async followUser() {
             try {
@@ -201,8 +182,25 @@
             this.image_url = imageUrl
             // 获取当前用户信息
             this.auth_user = await this.$parent.getCurrentUser()
-            this.getUser(options.name)
-            this.$apply()
+            try {
+                let userResponse = await api.request({
+                    url: 'users/' + options.name,
+                    header: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                this.user = userResponse.data.data
+                this.$apply()
+                // 动态设置页面标题
+                wepy.setNavigationBarTitle({
+                    title: this.user.name + ' 的主页'
+                })
+            } catch (err) {
+                wepy.showModal({
+                    title: '提示',
+                    content: '服务器错误，请联系管理员'
+                })
+            }
         }
     }
 </script>

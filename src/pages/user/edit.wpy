@@ -7,7 +7,7 @@
                         <view class="zan-cell__bd">
                             个人主页
                         </view>
-                        <view class="zan-c-gray-darker">
+                        <view class="zan-c-gray-darker" wx:if="{{ user.avatar }}">
                             <image class="avatar" src="{{ image_url + user.avatar }}"></image>
                         </view>
                         <view class="weui-cell__ft weui-cell__ft_in-access"></view>
@@ -72,31 +72,10 @@
             user : null,
             image_url : ''
         }
-        // 获取用户数据
-        async getUser(name){
-            try {
-                let userResponse = await api.request({
-                    url: 'users/' + name,
-                    header: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                this.user = userResponse.data.data
-                this.$apply()
-            } catch (err) {
-                console.log(err)
-                wepy.showModal({
-                    title: '提示',
-                    content: '服务器错误，请联系管理员'
-                })
-            }
-        }
         async onShow() {
             this.image_url = imageUrl
             // 获取当前用户信息
-            let user = await this.$parent.getCurrentUser()
-            console.log(JSON.stringify(user));
-            this.getUser(user.name)
+            this.user = await this.$parent.getCurrentUser()
             this.$apply()
         }
         methods = {
