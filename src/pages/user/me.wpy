@@ -1,7 +1,7 @@
 <template>
     <view class="container">
         <view class="page-body">
-            <view class="page-body-user">
+            <view class="page-body-user" wx:if="{{ user.avatar }}">
                 <image wx:if="user.id == auth_user.id" @tap="updateBg" class="user_bg" mode="aspectFill" src="{{ image_url + (user.wx_bg ? user.wx_bg : user.avatar) }}"></image>
                 <image wx:else class="user_bg" mode="aspectFill" src="{{ image_url + (user.wx_bg ? user.wx_bg : user.avatar) }}"></image>
                 <view class="weui-cell__hd user_avatar">

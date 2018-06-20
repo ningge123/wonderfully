@@ -45,7 +45,7 @@ module.exports = {
           filter: /\.js$/,
           config: {
               find: /__BASE_URL__/g,
-              replace: prod ? "'https://www.cocoyo.xin'" : "'http://cocoyo.test'"
+              replace: prod ? "'https://www.cocoyo.xin'" : "'https://www.cocoyo.xin'"
           }
       }
   },

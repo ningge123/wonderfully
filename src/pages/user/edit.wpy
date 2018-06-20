@@ -7,7 +7,7 @@
                         <view class="zan-cell__bd">
                             个人主页
                         </view>
-                        <view class="zan-c-gray-darker">
+                        <view class="zan-c-gray-darker" wx:if="{{ user.avatar }}">
                             <image class="avatar" src="{{ image_url + user.avatar }}"></image>
                         </view>
                         <view class="weui-cell__ft weui-cell__ft_in-access"></view>
